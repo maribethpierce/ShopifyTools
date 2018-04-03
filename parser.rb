@@ -98,146 +98,106 @@ data_hash['items'].each_with_index do |item, index|
 	
 
 
-	if index == 49
-		puts "#{item}"
+	# if index == 49
+	# 	puts "#{item}"
 		
-	end
+	# end
 
 end
 
 # Generates file called 'products.csv' and populates items from 'shop-vestige.json'
-# CSV.open('latest_products.csv','w', 
-#     :write_headers=> true,
-#     :headers => headers #< column headers
-#   ) do|hdr|
+CSV.open('latest_products.csv','w', 
+    :write_headers=> true,
+    :headers => headers #< column headers
+  ) do|hdr|
 
-# data_hash['items'].each_with_index do |item, index|
+data_hash['items'].each_with_index do |item, index|
 	
-# 	handle = item['urlId']
-# 	title = item['title'].split.map(&:capitalize)*' '
-# 	body = item['excerpt']
-# 	vendors = []
+	handle = item['urlId']
+	title = item['title'].split.map(&:capitalize)*' '
+	body = item['excerpt']
+	vendors = []
 
-# 	# populate tag list from categories and tags, separate out vendors(designers)
-# 		prod_tags = ''
-# 		item['categories'].each do |cat|
-# 			prod_tags << " #{cat},"
-# 		end
-# 		if item['tags'].class == Array
-# 			item['tags'].each do |tag|
-# 				if tag != item['tags'].last
-# 			  		prod_tags << " #{tag},"
-# 			  	else
-# 			  		prod_tags << " #{tag}"
-# 			  	end
-# 	          if designers.include?("#{tag.split.map(&:capitalize)*' '}")
-# 	 				vendors << "#{tag.split.map(&:capitalize)*' '}"
-# 				end
-# 			end
-# 				vendor = vendors.first
-# 		end
+	# populate tag list from categories and tags, separate out vendors(designers)
+		prod_tags = ''
+		item['categories'].each do |cat|
+			prod_tags << " #{cat},"
+		end
+		if item['tags'].class == Array
+			item['tags'].each do |tag|
+				if tag != item['tags'].last
+			  		prod_tags << " #{tag},"
+			  	else
+			  		prod_tags << " #{tag}"
+			  	end
+	          if designers.include?("#{tag.split.map(&:capitalize)*' '}")
+	 				vendors << "#{tag.split.map(&:capitalize)*' '}"
+				end
+			end
+				vendor = vendors.first
+		end
 
-# 	# the second image listed (in items['items']['assetUrl']) with each item seems to be the lead image
-# 	  	lead_image = item['items'][0]['assetUrl']
+	# the second image listed (in items['items']['assetUrl']) with each item seems to be the lead image
+	  	lead_image = item['items'][0]['assetUrl']
 
-# 	# assign variants for first pass
+	# assign variants for first pass
 		
-# 		item['structuredContent']['variants'].each do |var|
-# 			option1_name = "Title"
-# 			option1_value = "Default Title"
-# 			option2_name = ""
-# 			option2_value = ""
-# 			option3_name = ""
-# 			option3_value = ""
-# 			price = var['price']/100
-# 			sku = var['sku']
-# 			quantity = var['qtyInStock']
-# 			unless var['attributes'].values[0] == nil || var['attributes'].values[0] == ""
-# 				option1_name = var['attributes'].keys[0]
-# 				option1_value = var['attributes'].values[0]
-# 			end
-# 			unless var['attributes'].values[1] == nil || var['attributes'].values[1] == ""
-# 				option2_name = var['attributes'].keys[1]
-# 				option2_value = var['attributes'].values[1]
-# 			end
+		item['structuredContent']['variants'].each do |var|
+			option1_name = "Title"
+			option1_value = "Default Title"
+			option2_name = ""
+			option2_value = ""
+			option3_name = ""
+			option3_value = ""
+			price = var['price']/100
+			sku = var['sku']
+			quantity = var['qtyInStock']
+			unless var['attributes'].values[0] == nil || var['attributes'].values[0] == ""
+				option1_name = var['attributes'].keys[0]
+				option1_value = var['attributes'].values[0]
+			end
+			unless var['attributes'].values[1] == nil || var['attributes'].values[1] == ""
+				option2_name = var['attributes'].keys[1]
+				option2_value = var['attributes'].values[1]
+			end
 
-# 		# Generate first row for this product
+		# Generate first row for this product
 
-# 			hdr << populate_row(
-# 				Handle: handle,
-# 				Title: title,
-# 				Body: body,
-# 				Vendor: vendor,
-# 				Tags: prod_tags,
-# 				Option1_Name: option1_name,
-# 				Option1_Value: option1_value,
-# 				Option2_Name: option2_name,
-# 				Option2_Value: option2_value,
-# 				Option3_Name: option3_name,
-# 				Option3_Value: option3_value,
-# 				Variant_SKU: sku,
-# 				Variant_Inventory_Qty: quantity,
-# 				Variant_Inventory_Policy: "Deny",
-# 				Variant_Fulfillment_Service: "Manual",
-# 				Variant_Price: price,
-# 				Image_Src: lead_image,
-# 				Variant_Tax_Code: "",
-# 			)
-# 		end
-# 	# assign variants for additional passes
-# 		# if current_item_variants.count > 1 
+			hdr << populate_row(
+				Handle: handle,
+				Title: title,
+				Body: body,
+				Vendor: vendor,
+				Tags: prod_tags,
+				Option1_Name: option1_name,
+				Option1_Value: option1_value,
+				Option2_Name: option2_name,
+				Option2_Value: option2_value,
+				Option3_Name: option3_name,
+				Option3_Value: option3_value,
+				Variant_SKU: sku,
+				Variant_Inventory_Qty: quantity,
+				Variant_Inventory_Policy: "Deny",
+				Variant_Fulfillment_Service: "Manual",
+				Variant_Price: price,
+				Image_Src: lead_image,
+				Variant_Tax_Code: "",
+			)
+		end
 
+	# assign additional images for this product
+		first_listed_image = item['assetUrl']
+		# get first listed image - item['assetUrl']
+		item['items'].each_with_index do |item, index|
+			if index == 0 # if this is the second listed image (item['item']['assetUrl']), 
+					# skip this image as it was loaded earlier and use the first one (item['assetUrl'])
+				imageUrl = first_listed_image 
+			else # for all other images, load them normally
+				imageUrl = item['assetUrl']
+			end
 			
-# 		# 	# iterate over the rest of the attributes and create a csv row for each (populate_row(args))
-# 		# 	item['structuredContent']['variants'].each do |var|
-# 		# 		if var == item['structuredContent']['variants'].first
-# 		# 			# do nothing. This variant has already been processed.
-# 		# 		else
-# 		# 			# Determine if there are combinations of variants (size and color)
-					
-# 		# 			var['attributes'].keys.each do |key|
-# 		# 				if first_variant == key && key.length > 0
+			hdr << populate_row(Handle: handle, Image_Src: imageUrl)
 
-# 		# 				elsif first_variant != key && key.length > 0
-
-# 		# 				end
-# 		# 			end
-# 		# 			if var['attributes'].values.first != nil && var['attributes'].values.first.length > 0
-
-
-# 		# 				sku = "#{var['sku']}"
-# 		# 				option1_name = "#{var['attributes'].keys.first}"
-# 		# 				option1_value = "#{var['attributes'].values.first}"
-# 		# 				price = "#{var['price']/100}"
-# 		# 				quantity = "#{var['qtyInStock']}"
-# 		# 				hdr << populate_row(
-# 		# 					Handle: handle, 
-# 		# 					Option1_Name: option1_name,
-# 		# 					Option1_Value: option1_value,
-# 		# 					Variant_Inventory_Policy: "Deny",
-# 		# 					Variant_Fulfillment_Service: "Manual",
-# 		# 					Variant_Price: price,
-# 		# 					Variant_SKU: sku,
-# 		# 					Variant_Inventory_Qty: quantity,					
-# 		# 				)
-# 		# 			end
-# 		# 		end
-# 		# 	end
-# 		# end
-
-# 	# assign additional images for this product
-# 		first_listed_image = item['assetUrl']
-# 		# get first listed image - item['assetUrl']
-# 		item['items'].each_with_index do |item, index|
-# 			if index == 0 # if this is the second listed image (item['item']['assetUrl']), 
-# 					# skip this image as it was loaded earlier and use the first one (item['assetUrl'])
-# 				imageUrl = first_listed_image 
-# 			else # for all other images, load them normally
-# 				imageUrl = item['assetUrl']
-# 			end
-			
-# 			hdr << populate_row(Handle: handle, Image_Src: imageUrl)
-
-# 		end  # end each_with_index
-# 	end  # end data_hash['items'].each do |item|
-# end # end CSV builder
+		end  # end each_with_index
+	end  # end data_hash['items'].each do |item|
+end # end CSV builder
