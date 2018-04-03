@@ -176,6 +176,7 @@ data_hash['items'].each_with_index do |item, index|
 				Option3_Name: option3_name,
 				Option3_Value: option3_value,
 				Variant_SKU: sku,
+				Variant_Inventory_Tracker: "Shopify",
 				Variant_Inventory_Qty: quantity,
 				Variant_Inventory_Policy: "Deny",
 				Variant_Fulfillment_Service: "Manual",
